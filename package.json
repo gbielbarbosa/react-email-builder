@@ -1,0 +1,56 @@
+{
+  "name": "react-email-builder",
+  "version": "0.1.0",
+  "description": "A React component library for building responsive email templates with a drag-and-drop editor",
+  "license": "MIT",
+  "author": "Gabriel Barbosa",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/index.css"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "@tiptap/core": ">=3.0.0",
+    "@tiptap/react": ">=3.0.0",
+    "@tiptap/starter-kit": ">=3.0.0",
+    "@react-email/components": ">=1.0.0",
+    "@react-email/editor": ">=1.0.0",
+    "@react-email/render": ">=2.0.0"
+  },
+  "dependencies": {
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@react-email/components": "^1.0.12",
+    "@react-email/editor": "^1.1.0",
+    "@react-email/render": "^2.0.7",
+    "@tiptap/core": "^3.22.3",
+    "@tiptap/react": "^3.22.3",
+    "@tiptap/starter-kit": "^3.22.3",
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^10.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsup": "^8.5.0",
+    "typescript": "~6.0.2"
+  }
+}
