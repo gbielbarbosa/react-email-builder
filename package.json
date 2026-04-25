@@ -1,5 +1,5 @@
 {
-  "name": "react-email-builder",
+  "name": "@gbielbarbosa/react-email-builder",
   "version": "0.1.0",
   "description": "A React component library for building responsive email templates with a drag-and-drop editor",
   "license": "MIT",

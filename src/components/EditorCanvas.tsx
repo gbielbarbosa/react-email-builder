@@ -2,14 +2,13 @@ import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import { EmailEditor, type EmailEditorRef } from '@react-email/editor';
 import {
   ColumnsColumn,
-  GlobalContent,
   StarterKit,
   Paragraph,
   Section,
   Container,
   TwoColumns,
 } from '@react-email/editor/extensions';
-import { EDITOR_THEMES, EmailTheming, extendTheme, getMergedCssJs, INBOX_EMAIL_DEFAULTS } from '@react-email/editor/plugins';
+import { EDITOR_THEMES, EmailTheming, extendTheme } from '@react-email/editor/plugins';
 import { Extension } from '@tiptap/core';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { NodeSelection, Plugin, PluginKey } from '@tiptap/pm/state';

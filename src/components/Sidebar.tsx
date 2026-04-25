@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Editor } from '@tiptap/core';
 import { type ElementType } from '../core/types';
 import {
-  IconText, IconImage, IconButton, IconSpacer,
+  IconText, IconImage, IconButton,
   IconContainer, IconColumn, IconHeading, IconLink,
   IconMarkdown, IconDivider, IconSection,
 } from '../Icons';

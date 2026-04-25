@@ -25,7 +25,7 @@ A React component library for building responsive email templates with a drag-an
 ## Installation
 
 ```bash
-npm install react-email-builder
+npm install @gbielbarbosa/react-email-builder
 ```
 
 Install peer dependencies if they are not already present in your project:
@@ -41,7 +41,7 @@ npm install react react-dom \
 Import the `<EmailBuilder />` anywhere in your app:
 
 ```tsx
-import { EmailBuilder } from 'react-email-builder';
+import { EmailBuilder } from '@gbielbarbosa/react-email-builder';
 
 export default function App() {
   return <EmailBuilder />;
@@ -57,7 +57,7 @@ That's it. The component renders a full-featured email editor with sidebar, canv
 The top-level, batteries-included component. Renders the complete editor UI: sidebar, canvas, inspector panel, and header with preview buttons.
 
 ```tsx
-import { EmailBuilder } from 'react-email-builder';
+import { EmailBuilder } from '@gbielbarbosa/react-email-builder';
 
 <EmailBuilder />
 ```
@@ -69,7 +69,7 @@ import { EmailBuilder } from 'react-email-builder';
 The editor canvas in isolation, useful when you want to compose your own layout around the editor.
 
 ```tsx
-import { EditorCanvas } from 'react-email-builder';
+import { EditorCanvas } from '@gbielbarbosa/react-email-builder';
 import { Inspector } from '@react-email/editor/ui';
 import { type EmailEditorRef } from '@react-email/editor';
 
@@ -105,7 +105,7 @@ function MyEditor() {
 The block palette and structure panel. Can be used independently if you want to build a custom layout.
 
 ```tsx
-import { Sidebar } from 'react-email-builder';
+import { Sidebar } from '@gbielbarbosa/react-email-builder';
 import { type EmailEditorRef } from '@react-email/editor';
 
 <Sidebar editor={editorRef?.editor} />

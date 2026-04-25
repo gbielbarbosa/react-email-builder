@@ -1,8 +1,6 @@
-import React from 'react';
-import { useCurrentEditor } from '@tiptap/react';
-import { InspectorRow, InspectorSection, InspectorSelect, InspectorTextInput, InspectorToggleGroup, InspectorToggleItem } from './InspectorPrimitives';
+import { InspectorSection, InspectorSelect, InspectorToggleGroup, InspectorToggleItem } from './InspectorPrimitives';
 import { AlignCenterIcon, AlignCenterVerticalIcon, AlignEndVerticalIcon, AlignLeftIcon, AlignRightIcon, AlignStartVerticalIcon } from '@react-email/editor/ui';
-import { KnownCssProperties, KnownThemeComponents } from '@react-email/editor/plugins';
+import { KnownThemeComponents } from '@react-email/editor/plugins';
 
 const ALIGNMENT_ITEMS = [
   {
