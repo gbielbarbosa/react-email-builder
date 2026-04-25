@@ -65,6 +65,7 @@ html,
 }
 .reb-content {
   height: 100%;
+  overflow: hidden;
 }
 .reb-header {
   min-height: 56px;

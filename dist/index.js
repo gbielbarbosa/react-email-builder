@@ -81,7 +81,7 @@ var Sidebar = ({ editor }) => {
       const nodes = [];
       editor.state.doc.descendants((node, pos) => {
         const isRelevantBlock = node.isBlock || node.type.name === "button" || node.type.name === "image";
-        if (isRelevantBlock && node.type.name !== "doc") {
+        if (isRelevantBlock && node.type.name !== "doc" && node.type.name !== "globalContent") {
           nodes.push({
             type: node.type.name,
             pos,
