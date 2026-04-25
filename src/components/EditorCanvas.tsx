@@ -8,14 +8,11 @@ import {
   Section,
   Container,
   TwoColumns,
-  ThreeColumns,
-  FourColumns,
 } from '@react-email/editor/extensions';
-import { EDITOR_THEMES, EmailTheming, getMergedCssJs, INBOX_EMAIL_DEFAULTS } from '@react-email/editor/plugins';
+import { EDITOR_THEMES, EmailTheming, extendTheme, getMergedCssJs, INBOX_EMAIL_DEFAULTS } from '@react-email/editor/plugins';
 import { Extension } from '@tiptap/core';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { NodeSelection, Plugin, PluginKey } from '@tiptap/pm/state';
-import { Spacer } from '../extensions/Spacer';
 
 // --------------------------------------------------------------------------
 // Constants
@@ -27,21 +24,20 @@ import { Spacer } from '../extensions/Spacer';
  */
 const HIDDEN_BUBBLE_MENU_NODES = [
   'spacer', 'section', 'container',
-  'twoColumns', 'threeColumns', 'fourColumns', 'columnsColumn',
+  'columns', 'columnsColumn',
   'image', 'divider',
 ];
 
 /** StarterKit extensions overridden by custom implementations below. */
 const STARTER_KIT_OVERRIDES = {
-  GlobalContent: false,
-  TrailingNode:  false,
-  Paragraph:     false,
-  Section:       false,
-  TwoColumns:    false,
-  ThreeColumns:  false,
-  FourColumns:   false,
+  TrailingNode: false,
+  Paragraph: false,
+  Section: false,
+  TwoColumns: false,
+  ThreeColumns: false,
+  FourColumns: false,
   ColumnsColumn: false,
-  Container:     false,
+  Container: false,
 } as const;
 
 // --------------------------------------------------------------------------
@@ -71,8 +67,9 @@ const extendAsBlock = (ext: any, className: string) =>
       };
     },
 
-    renderHTML({ HTMLAttributes }: any) {
-      return this.parent?.({
+    renderHTML({ node, HTMLAttributes }: any) {
+      return this.parent!({
+        node,
         HTMLAttributes: { ...HTMLAttributes, 'data-node-type': className },
       });
     },
@@ -96,7 +93,6 @@ const getDefaultStyleFor = (editor: any, nodeType: string): string => {
   return group.inputs
     .filter((i: any) => i.value !== undefined)
     .map((i: any) => {
-      // Convert camelCase property names to kebab-case CSS properties
       const prop = i.prop.replace(/([A-Z])/g, '-$1').toLowerCase();
       const unit = i.unit || '';
       return `${prop}: ${i.value}${unit};`;
@@ -108,43 +104,70 @@ const getDefaultStyleFor = (editor: any, nodeType: string): string => {
 // Custom extensions
 // --------------------------------------------------------------------------
 
-const CustomGlobalContent = GlobalContent.extend({
-  selectable: false,
+const CustomParagraph = extendAsBlock(Paragraph, 'node-paragraph');
+const CustomSection = extendAsBlock(Section.extend({ content: 'block*' }), 'node-section');
+const CustomColumn = extendAsBlock(ColumnsColumn.extend({ content: 'block*' }), 'node-column');
+
+/**
+ * Unified columns extension — replaces TwoColumns/ThreeColumns/FourColumns.
+ * Uses `columnCount` attribute (2–4) to control how many columnsColumn children
+ * are expected. Content is `columnsColumn+` to allow any number of children.
+ */
+const CustomColumns = TwoColumns.extend({
+  name: 'columns',
+  content: 'columnsColumn+',
+  selectable: true,
+  draggable: true,
+  isolated: true,
+
   addAttributes() {
     return {
       ...this.parent?.(),
-      data: {
-        default: {},
-        // Serialize the data object as a JSON string in the DOM attribute
+      columnCount: {
+        default: 2,
         renderHTML: (attributes: any) => ({
-          data: JSON.stringify(attributes.data),
+          'data-column-count': String(attributes.columnCount ?? 2),
         }),
-        // Deserialize the JSON string back into an object when parsing HTML
         parseHTML: (element: HTMLElement) => {
-          const raw = element.getAttribute('data');
-          try {
-            return JSON.parse(raw || '{}');
-          } catch {
-            return {};
-          }
+          return parseInt(element.getAttribute('data-column-count') || '2', 10);
         },
+      },
+      class: {
+        default: 'node-columns',
+        renderHTML: () => ({ class: 'node-columns' }),
       },
     };
   },
+
+  renderHTML({ node, HTMLAttributes }: any) {
+    return this.parent!({
+      node,
+      HTMLAttributes: { ...HTMLAttributes, 'data-node-type': 'node-columns' },
+    });
+  },
 });
 
-const CustomParagraph    = extendAsBlock(Paragraph, 'node-paragraph');
-const CustomSection      = extendAsBlock(Section.extend({ content: 'block*' }), 'node-section');
-const CustomTwoColumns   = extendAsBlock(TwoColumns,   'node-columns');
-const CustomThreeColumns = extendAsBlock(ThreeColumns, 'node-columns');
-const CustomFourColumns  = extendAsBlock(FourColumns,  'node-columns');
-const CustomColumn       = extendAsBlock(ColumnsColumn.extend({ content: 'block*' }), 'node-column');
+/**
+ * Walks up the DOM from `el` and returns the closest element that has
+ * a `data-node-type` attribute, or `null` if none is found.
+ */
+function closestNodeTypeEl(el: HTMLElement | null): HTMLElement | null {
+  let cur: HTMLElement | null = el;
+  while (cur) {
+    if (cur.hasAttribute('data-node-type')) return cur;
+    cur = cur.parentElement;
+  }
+  return null;
+}
 
 /**
  * ProseMirror plugin that intercepts mousedown events on nodes marked with
  * `data-node-type` and converts them into proper NodeSelections.
- * This ensures structural blocks (sections, columns, etc.) are selectable
- * by clicking their padding/border area.
+ *
+ * Key fix: we walk up the DOM from the actual event target to find the
+ * closest `data-node-type` element, then resolve its PM position so we
+ * always select the innermost matching node (e.g. a paragraph inside a
+ * column column) rather than an ancestor.
  */
 const SelectionHelper = Extension.create({
   name: 'selectionHelper',
@@ -156,35 +179,59 @@ const SelectionHelper = Extension.create({
           handleDOMEvents: {
             mousedown(view, event) {
               const { state, dispatch } = view;
+
+              // Find the closest DOM element that represents a PM node.
+              const nodeEl = closestNodeTypeEl(event.target as HTMLElement);
+              if (!nodeEl) return false;
+
+              const nodeType = nodeEl.getAttribute('data-node-type');
+
+              // For paragraphs we allow normal text cursor placement,
+              // so we only set a NodeSelection, but don't preventDefault.
+              const isParagraph = nodeType === 'node-paragraph';
+
+              // Resolve the PM position for the clicked DOM element.
               const pos = view.posAtCoords({ left: event.clientX, top: event.clientY });
               if (!pos) return false;
 
               const $pos = state.doc.resolve(pos.pos);
 
-              // Walk up the tree to find the nearest selectable ancestor
+              // Walk up the PM node tree to find the selectable node that
+              // corresponds to the DOM element we identified above.
               let selectablePos = -1;
               for (let d = $pos.depth; d >= 0; d--) {
                 const node = $pos.node(d);
-                if (node.type.spec.selectable) {
+                if (!node.type.spec.selectable) continue;
+
+                // Match the PM node to the DOM element by node-type class.
+                const pmClass = `node-${node.type.name}`
+                  .replace('columnsColumn', 'node-column') // normalise alias
+                  .replace('node-node-', 'node-');         // guard double prefix
+
+                // Accept either a direct class match or exact data-node-type match.
+                if (
+                  node.type.name === nodeType?.replace('node-', '') ||
+                  `node-${node.type.name}` === nodeType
+                ) {
                   selectablePos = $pos.before(d);
                   break;
+                }
+
+                // Fallback: take the deepest selectable ancestor.
+                if (selectablePos < 0) {
+                  selectablePos = $pos.before(d);
                 }
               }
 
               if (selectablePos >= 0) {
-                const target = event.target as HTMLElement;
-
-                // Only intercept clicks on the node container itself (e.g. its padding/border)
-                if (target.hasAttribute('data-node-type')) {
-                  try {
-                    dispatch(state.tr.setSelection(NodeSelection.create(state.doc, selectablePos)));
-                    if (target.getAttribute('data-node-type') !== 'node-paragraph') {
-                      event.preventDefault();
-                    }
-                    return true;
-                  } catch {
-                    // Fail silently — position may be invalid
+                try {
+                  dispatch(state.tr.setSelection(NodeSelection.create(state.doc, selectablePos)));
+                  if (!isParagraph) {
+                    event.preventDefault();
                   }
+                  return !isParagraph;
+                } catch {
+                  // Fail silently
                 }
               }
               return false;
@@ -220,7 +267,6 @@ const ExternalDropHandler = Extension.create({
               const $pos = view.state.doc.resolve(coordinates.pos);
               const parent = $pos.parent;
 
-              // If dropping inside an inline context, insert after the current block
               let insertPos = coordinates.pos;
               if (parent.type.spec.content?.includes('inline')) {
                 insertPos = $pos.after();
@@ -228,6 +274,16 @@ const ExternalDropHandler = Extension.create({
 
               const schema = view.state.schema;
               let node;
+
+              // Containers may only be dropped directly inside doc (the body).
+              if (type === 'container') {
+                const $drop = view.state.doc.resolve(coordinates.pos);
+                const directParentIsBody = $drop.parent.type.name === 'doc';
+                const grandParentIsBody =
+                  $drop.depth >= 2 &&
+                  $drop.node($drop.depth - 1).type.name === 'doc';
+                if (!directParentIsBody && !grandParentIsBody) return false;
+              }
 
               switch (type) {
                 case 'heading':
@@ -250,15 +306,12 @@ const ExternalDropHandler = Extension.create({
                   );
                   break;
 
-                case 'twoColumns':
-                case 'threeColumns':
-                case 'fourColumns': {
-                  const count = type === 'twoColumns' ? 2 : type === 'threeColumns' ? 3 : 4;
-                  const cols = Array.from({ length: count }, () =>
+                case 'columns': {
+                  const cols = Array.from({ length: 2 }, () =>
                     schema.nodes.columnsColumn.create(null, [])
                   );
-                  node = schema.nodes[type].create(
-                    { style: getDefaultStyleFor(editor, type) },
+                  node = schema.nodes.columns.create(
+                    { columnCount: 2, style: getDefaultStyleFor(editor, 'twoColumns') },
                     cols
                   );
                   break;
@@ -316,74 +369,6 @@ const ExternalDropHandler = Extension.create({
   },
 });
 
-/**
- * Extension that runs once on editor creation to inject the `globalContent`
- * node with the active theme's merged default styles.
- * Only runs if no `globalContent` node is already present in the document.
- */
-const ThemeInitializer = Extension.create({
-  name: 'themeInitializer',
-  onCreate() {
-    const { state } = this.editor;
-    const themePlugin = this.editor.extensionManager.extensions.find(
-      (e: any) => e.name === 'emailTheming'
-    );
-    const themeName = (themePlugin?.options?.theme || 'basic') as any;
-    const hasGlobal = state.doc.firstChild?.type.name === 'globalContent';
-
-    if (hasGlobal) return;
-
-    const themeKey = themeName as keyof typeof EDITOR_THEMES;
-    const mergedStyles = getMergedCssJs(themeName, EDITOR_THEMES[themeKey]);
-
-    // Patch each theme group to include a top-level "Padding" input
-    const patchedStyles = EDITOR_THEMES[themeKey].map((group: any) => {
-      const paddingInput = {
-        label: 'Padding',
-        type: 'number',
-        value: 8,
-        prop: 'padding',
-        classReference: group.classReference,
-        unit: 'px',
-      };
-
-      return {
-        ...group,
-        inputs: [
-          ...group.inputs.map((input: any) => {
-            // Normalize individual padding values for the body group
-            if (input.prop.startsWith('padding') && group.id === 'body') {
-              return { ...input, value: 8 };
-            }
-            return input;
-          }),
-          paddingInput,
-        ],
-      };
-    });
-
-    this.editor.commands.insertContentAt(0, {
-      type: 'globalContent',
-      attrs: {
-        data: {
-          body: {
-            ...(INBOX_EMAIL_DEFAULTS.body || {}),
-            ...(mergedStyles.body || {}),
-            paddingTop: 8, paddingRight: 8, paddingBottom: 8, paddingLeft: 8,
-          },
-          container: {
-            ...(INBOX_EMAIL_DEFAULTS.container || {}),
-            ...(mergedStyles.container || {}),
-            width: 600,
-            padding: 8, paddingTop: 0, paddingRight: 0, paddingBottom: 0, paddingLeft: 0,
-          },
-          styles: patchedStyles,
-        },
-      },
-    });
-  },
-});
-
 // --------------------------------------------------------------------------
 // Component
 // --------------------------------------------------------------------------
@@ -392,6 +377,11 @@ interface EditorCanvasProps {
   onReady?: (ref: EmailEditorRef) => void;
   children?: React.ReactNode;
 }
+
+const customTheme = extendTheme("basic", {
+  body: { fontFamily: "system-ui", padding: 8 },
+  container: { width: 600, padding: 8 }
+});
 
 export const EditorCanvas = forwardRef<EmailEditorRef, EditorCanvasProps>(
   ({ onReady, children }, ref) => {
@@ -407,29 +397,24 @@ export const EditorCanvas = forwardRef<EmailEditorRef, EditorCanvasProps>(
           onUploadImage={async (file) => ({ url: URL.createObjectURL(file) })}
           bubbleMenu={{ hideWhenActiveNodes: HIDDEN_BUBBLE_MENU_NODES }}
           extensions={[
-            EmailTheming.configure({ theme: 'basic' }),
+            EmailTheming.configure({ theme: customTheme }),
             StarterKit.configure(STARTER_KIT_OVERRIDES),
             SelectionHelper,
-            CustomGlobalContent,
             CustomParagraph,
             CustomSection,
             CustomColumn,
-            CustomTwoColumns,
-            CustomThreeColumns,
-            CustomFourColumns,
+            CustomColumns,
             Container.extend({ content: 'block*' }),
             Placeholder.configure({
               placeholder: ({ node }) => {
-                if (node.type.name === 'heading')   return 'Heading';
+                if (node.type.name === 'heading') return 'Heading';
                 if (node.type.name === 'paragraph') return 'Add your text here...';
                 return 'Drag components here...';
               },
               includeChildren: true,
               showOnlyCurrent: false,
             }),
-            Spacer,
             ExternalDropHandler,
-            ThemeInitializer,
           ]}
         >
           {children}

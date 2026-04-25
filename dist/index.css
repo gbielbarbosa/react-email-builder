@@ -87,6 +87,34 @@ html,
   display: flex;
   gap: 0.5rem;
 }
+.reb-view-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--reb-item-hover);
+  padding: 4px;
+  border-radius: 10px;
+}
+.reb-view-tab {
+  padding: 0.4rem 1.2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--reb-text-muted);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+}
+.reb-view-tab:hover {
+  color: var(--reb-text-main);
+  background: var(--reb-item-bg);
+}
+.reb-view-tab.active {
+  background: var(--reb-item-bg);
+  color: var(--reb-text-main);
+  box-shadow: 0 1px 4px var(--reb-shadow);
+}
 .reb-btn {
   padding: 0.6rem;
   font-size: 0.8rem;
@@ -95,6 +123,58 @@ html,
   background: var(--reb-item-bg);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reb-code-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--reb-bg-canvas);
+  overflow: hidden;
+}
+.reb-code-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--reb-border);
+  background: var(--reb-bg-sidebar);
+  flex-shrink: 0;
+}
+.reb-code-panel-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--reb-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.reb-code-copy-btn {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--reb-border);
+  border-radius: 6px;
+  background: var(--reb-item-bg);
+  color: var(--reb-text-main);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.reb-code-copy-btn:hover {
+  background: var(--reb-item-hover);
+}
+.reb-code-content {
+  flex: 1;
+  overflow: auto;
+  margin: 0;
+  padding: 1.5rem;
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--reb-text-main);
+  white-space: break-spaces;
+  tab-size: 2;
 }
 .reb-sidebar {
   width: 300px;
@@ -218,41 +298,6 @@ html,
 }
 .reb-structure-delete-btn:hover {
   opacity: 1;
-}
-.reb-column-controls {
-  padding: 1rem;
-  border-top: 1px solid var(--reb-border);
-}
-.reb-column-controls-label {
-  font-size: 0.625rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--reb-text-muted);
-  margin-bottom: 0.5rem;
-}
-.reb-column-controls-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-.reb-column-btn {
-  flex: 1;
-  padding: 0.25rem;
-  font-size: 0.6875rem;
-  border: 1px solid var(--reb-border);
-  border-radius: 4px;
-  background: var(--reb-item-bg);
-  color: var(--reb-text-main);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.reb-column-btn:hover {
-  background: var(--reb-item-hover);
-}
-.reb-column-btn.active {
-  background: var(--reb-primary);
-  color: var(--reb-bg-sidebar);
-  border-color: var(--reb-primary);
 }
 .reb-editor {
   width: 100%;

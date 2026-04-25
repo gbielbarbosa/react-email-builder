@@ -1,9 +1,7 @@
 "use strict";
-var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
@@ -17,28 +15,27 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  BodyExtras: () => BodyExtras,
+  ColumnControls: () => ColumnControls,
   EditorCanvas: () => EditorCanvas,
   EmailBuilder: () => EmailBuilder,
-  Sidebar: () => Sidebar,
-  Spacer: () => Spacer
+  InspectorRow: () => InspectorRow,
+  InspectorSection: () => InspectorSection,
+  InspectorSelect: () => InspectorSelect,
+  InspectorTextInput: () => InspectorTextInput,
+  InspectorToggleGroup: () => InspectorToggleGroup,
+  InspectorToggleItem: () => InspectorToggleItem,
+  Sidebar: () => Sidebar
 });
 module.exports = __toCommonJS(index_exports);
 
 // src/components/EmailBuilder.tsx
-var import_react5 = require("react");
+var import_react4 = require("react");
 
 // src/components/Sidebar.tsx
 var import_react = require("react");
@@ -56,11 +53,6 @@ var IconImage = (props) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" })
 ] });
 var IconButton = (props) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { width: "18", height: "12", x: "3", y: "6", rx: "3" }) });
-var IconSpacer = (props) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [
-  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M12 5v14" }),
-  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m8 9 4-4 4 4" }),
-  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m8 15 4 4 4-4" })
-] });
 var IconContainer = (props) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { width: "18", height: "18", x: "3", y: "3", rx: "2" }),
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 9h18" }),
@@ -96,19 +88,18 @@ var import_jsx_runtime2 = require("react/jsx-runtime");
 var TOOLS = [
   { type: "container", label: "Container", icon: IconContainer },
   { type: "section", label: "Section", icon: IconSection },
-  { type: "column", label: "Column", icon: IconColumn },
+  { type: "columns", label: "Columns", icon: IconColumn },
   { type: "heading", label: "Heading", icon: IconHeading },
   { type: "text", label: "Text", icon: IconText },
   { type: "image", label: "Image", icon: IconImage },
   { type: "button", label: "Button", icon: IconButton },
   { type: "link", label: "Link", icon: IconLink },
   { type: "markdown", label: "Markdown", icon: IconMarkdown },
-  { type: "divider", label: "Divider", icon: IconDivider },
-  { type: "spacer", label: "Spacer", icon: IconSpacer }
+  { type: "divider", label: "Divider", icon: IconDivider }
 ];
 var ToolItem = ({ type, label, icon: Icon }) => {
   const handleDragStart = (e) => {
-    const blockType = type === "column" ? "twoColumns" : type;
+    const blockType = type;
     e.dataTransfer.setData("application/react-email-block", JSON.stringify({ type: blockType }));
     e.dataTransfer.effectAllowed = "move";
   };
@@ -189,64 +180,24 @@ var Sidebar = ({ editor }) => {
 };
 
 // src/components/EditorCanvas.tsx
-var import_react3 = require("react");
+var import_react2 = require("react");
 var import_editor = require("@react-email/editor");
 var import_extensions = require("@react-email/editor/extensions");
 var import_plugins = require("@react-email/editor/plugins");
-var import_core2 = require("@tiptap/core");
+var import_core = require("@tiptap/core");
 var import_extension_placeholder = require("@tiptap/extension-placeholder");
 var import_state = require("@tiptap/pm/state");
-
-// src/extensions/Spacer.ts
-var import_react2 = __toESM(require("react"), 1);
-var import_core = require("@react-email/editor/core");
-var Spacer = import_core.EmailNode.create({
-  name: "spacer",
-  group: "block",
-  selectable: true,
-  draggable: true,
-  atom: true,
-  addAttributes() {
-    return {
-      height: {
-        default: "20px",
-        parseHTML: (element) => element.style.height,
-        renderHTML: (attributes) => ({
-          style: `height: ${attributes.height}`
-        })
-      }
-    };
-  },
-  parseHTML() {
-    return [{ tag: 'div[data-type="spacer"]' }];
-  },
-  renderHTML({ HTMLAttributes }) {
-    return ["div", { ...HTMLAttributes, "data-type": "spacer", class: "node-spacer" }];
-  },
-  renderToReactEmail({ node }) {
-    return import_react2.default.createElement("div", {
-      style: {
-        height: node.attrs?.height || "20px"
-      }
-    });
-  }
-});
-
-// src/components/EditorCanvas.tsx
 var import_jsx_runtime3 = require("react/jsx-runtime");
 var HIDDEN_BUBBLE_MENU_NODES = [
   "spacer",
   "section",
   "container",
-  "twoColumns",
-  "threeColumns",
-  "fourColumns",
+  "columns",
   "columnsColumn",
   "image",
   "divider"
 ];
 var STARTER_KIT_OVERRIDES = {
-  GlobalContent: false,
   TrailingNode: false,
   Paragraph: false,
   Section: false,
@@ -272,8 +223,9 @@ var extendAsBlock = (ext, className) => ext.extend({
       }
     };
   },
-  renderHTML({ HTMLAttributes }) {
-    return this.parent?.({
+  renderHTML({ node, HTMLAttributes }) {
+    return this.parent({
+      node,
       HTMLAttributes: { ...HTMLAttributes, "data-node-type": className }
     });
   }
@@ -293,37 +245,49 @@ var getDefaultStyleFor = (editor, nodeType) => {
     return `${prop}: ${i.value}${unit};`;
   }).join(" ");
 };
-var CustomGlobalContent = import_extensions.GlobalContent.extend({
-  selectable: false,
+var CustomParagraph = extendAsBlock(import_extensions.Paragraph, "node-paragraph");
+var CustomSection = extendAsBlock(import_extensions.Section.extend({ content: "block*" }), "node-section");
+var CustomColumn = extendAsBlock(import_extensions.ColumnsColumn.extend({ content: "block*" }), "node-column");
+var CustomColumns = import_extensions.TwoColumns.extend({
+  name: "columns",
+  content: "columnsColumn+",
+  selectable: true,
+  draggable: true,
+  isolated: true,
   addAttributes() {
     return {
       ...this.parent?.(),
-      data: {
-        default: {},
-        // Serialize the data object as a JSON string in the DOM attribute
+      columnCount: {
+        default: 2,
         renderHTML: (attributes) => ({
-          data: JSON.stringify(attributes.data)
+          "data-column-count": String(attributes.columnCount ?? 2)
         }),
-        // Deserialize the JSON string back into an object when parsing HTML
         parseHTML: (element) => {
-          const raw = element.getAttribute("data");
-          try {
-            return JSON.parse(raw || "{}");
-          } catch {
-            return {};
-          }
+          return parseInt(element.getAttribute("data-column-count") || "2", 10);
         }
+      },
+      class: {
+        default: "node-columns",
+        renderHTML: () => ({ class: "node-columns" })
       }
     };
+  },
+  renderHTML({ node, HTMLAttributes }) {
+    return this.parent({
+      node,
+      HTMLAttributes: { ...HTMLAttributes, "data-node-type": "node-columns" }
+    });
   }
 });
-var CustomParagraph = extendAsBlock(import_extensions.Paragraph, "node-paragraph");
-var CustomSection = extendAsBlock(import_extensions.Section.extend({ content: "block*" }), "node-section");
-var CustomTwoColumns = extendAsBlock(import_extensions.TwoColumns, "node-columns");
-var CustomThreeColumns = extendAsBlock(import_extensions.ThreeColumns, "node-columns");
-var CustomFourColumns = extendAsBlock(import_extensions.FourColumns, "node-columns");
-var CustomColumn = extendAsBlock(import_extensions.ColumnsColumn.extend({ content: "block*" }), "node-column");
-var SelectionHelper = import_core2.Extension.create({
+function closestNodeTypeEl(el) {
+  let cur = el;
+  while (cur) {
+    if (cur.hasAttribute("data-node-type")) return cur;
+    cur = cur.parentElement;
+  }
+  return null;
+}
+var SelectionHelper = import_core.Extension.create({
   name: "selectionHelper",
   addProseMirrorPlugins() {
     return [
@@ -333,28 +297,34 @@ var SelectionHelper = import_core2.Extension.create({
           handleDOMEvents: {
             mousedown(view, event) {
               const { state, dispatch } = view;
+              const nodeEl = closestNodeTypeEl(event.target);
+              if (!nodeEl) return false;
+              const nodeType = nodeEl.getAttribute("data-node-type");
+              const isParagraph = nodeType === "node-paragraph";
               const pos = view.posAtCoords({ left: event.clientX, top: event.clientY });
               if (!pos) return false;
               const $pos = state.doc.resolve(pos.pos);
               let selectablePos = -1;
               for (let d = $pos.depth; d >= 0; d--) {
                 const node = $pos.node(d);
-                if (node.type.spec.selectable) {
+                if (!node.type.spec.selectable) continue;
+                const pmClass = `node-${node.type.name}`.replace("columnsColumn", "node-column").replace("node-node-", "node-");
+                if (node.type.name === nodeType?.replace("node-", "") || `node-${node.type.name}` === nodeType) {
                   selectablePos = $pos.before(d);
                   break;
                 }
+                if (selectablePos < 0) {
+                  selectablePos = $pos.before(d);
+                }
               }
               if (selectablePos >= 0) {
-                const target = event.target;
-                if (target.hasAttribute("data-node-type")) {
-                  try {
-                    dispatch(state.tr.setSelection(import_state.NodeSelection.create(state.doc, selectablePos)));
-                    if (target.getAttribute("data-node-type") !== "node-paragraph") {
-                      event.preventDefault();
-                    }
-                    return true;
-                  } catch {
+                try {
+                  dispatch(state.tr.setSelection(import_state.NodeSelection.create(state.doc, selectablePos)));
+                  if (!isParagraph) {
+                    event.preventDefault();
                   }
+                  return !isParagraph;
+                } catch {
                 }
               }
               return false;
@@ -365,7 +335,7 @@ var SelectionHelper = import_core2.Extension.create({
     ];
   }
 });
-var ExternalDropHandler = import_core2.Extension.create({
+var ExternalDropHandler = import_core.Extension.create({
   name: "externalDropHandler",
   addProseMirrorPlugins() {
     const editor = this.editor;
@@ -388,6 +358,12 @@ var ExternalDropHandler = import_core2.Extension.create({
               }
               const schema = view.state.schema;
               let node;
+              if (type === "container") {
+                const $drop = view.state.doc.resolve(coordinates.pos);
+                const directParentIsBody = $drop.parent.type.name === "doc";
+                const grandParentIsBody = $drop.depth >= 2 && $drop.node($drop.depth - 1).type.name === "doc";
+                if (!directParentIsBody && !grandParentIsBody) return false;
+              }
               switch (type) {
                 case "heading":
                   node = schema.nodes.heading.create(
@@ -406,16 +382,13 @@ var ExternalDropHandler = import_core2.Extension.create({
                     schema.text("Click Me")
                   );
                   break;
-                case "twoColumns":
-                case "threeColumns":
-                case "fourColumns": {
-                  const count = type === "twoColumns" ? 2 : type === "threeColumns" ? 3 : 4;
+                case "columns": {
                   const cols = Array.from(
-                    { length: count },
+                    { length: 2 },
                     () => schema.nodes.columnsColumn.create(null, [])
                   );
-                  node = schema.nodes[type].create(
-                    { style: getDefaultStyleFor(editor, type) },
+                  node = schema.nodes.columns.create(
+                    { columnCount: 2, style: getDefaultStyleFor(editor, "twoColumns") },
                     cols
                   );
                   break;
@@ -465,72 +438,14 @@ var ExternalDropHandler = import_core2.Extension.create({
     ];
   }
 });
-var ThemeInitializer = import_core2.Extension.create({
-  name: "themeInitializer",
-  onCreate() {
-    const { state } = this.editor;
-    const themePlugin = this.editor.extensionManager.extensions.find(
-      (e) => e.name === "emailTheming"
-    );
-    const themeName = themePlugin?.options?.theme || "basic";
-    const hasGlobal = state.doc.firstChild?.type.name === "globalContent";
-    if (hasGlobal) return;
-    const themeKey = themeName;
-    const mergedStyles = (0, import_plugins.getMergedCssJs)(themeName, import_plugins.EDITOR_THEMES[themeKey]);
-    const patchedStyles = import_plugins.EDITOR_THEMES[themeKey].map((group) => {
-      const paddingInput = {
-        label: "Padding",
-        type: "number",
-        value: 8,
-        prop: "padding",
-        classReference: group.classReference,
-        unit: "px"
-      };
-      return {
-        ...group,
-        inputs: [
-          ...group.inputs.map((input) => {
-            if (input.prop.startsWith("padding") && group.id === "body") {
-              return { ...input, value: 8 };
-            }
-            return input;
-          }),
-          paddingInput
-        ]
-      };
-    });
-    this.editor.commands.insertContentAt(0, {
-      type: "globalContent",
-      attrs: {
-        data: {
-          body: {
-            ...import_plugins.INBOX_EMAIL_DEFAULTS.body || {},
-            ...mergedStyles.body || {},
-            paddingTop: 8,
-            paddingRight: 8,
-            paddingBottom: 8,
-            paddingLeft: 8
-          },
-          container: {
-            ...import_plugins.INBOX_EMAIL_DEFAULTS.container || {},
-            ...mergedStyles.container || {},
-            width: 600,
-            padding: 8,
-            paddingTop: 0,
-            paddingRight: 0,
-            paddingBottom: 0,
-            paddingLeft: 0
-          },
-          styles: patchedStyles
-        }
-      }
-    });
-  }
+var customTheme = (0, import_plugins.extendTheme)("basic", {
+  body: { fontFamily: "system-ui", padding: 8 },
+  container: { width: 600, padding: 8 }
 });
-var EditorCanvas = (0, import_react3.forwardRef)(
+var EditorCanvas = (0, import_react2.forwardRef)(
   ({ onReady, children }, ref) => {
-    const editorRef = (0, import_react3.useRef)(null);
-    (0, import_react3.useImperativeHandle)(ref, () => editorRef.current);
+    const editorRef = (0, import_react2.useRef)(null);
+    (0, import_react2.useImperativeHandle)(ref, () => editorRef.current);
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "reb-canvas-container tiptap-extended", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
       import_editor.EmailEditor,
       {
@@ -540,16 +455,13 @@ var EditorCanvas = (0, import_react3.forwardRef)(
         onUploadImage: async (file) => ({ url: URL.createObjectURL(file) }),
         bubbleMenu: { hideWhenActiveNodes: HIDDEN_BUBBLE_MENU_NODES },
         extensions: [
-          import_plugins.EmailTheming.configure({ theme: "basic" }),
+          import_plugins.EmailTheming.configure({ theme: customTheme }),
           import_extensions.StarterKit.configure(STARTER_KIT_OVERRIDES),
           SelectionHelper,
-          CustomGlobalContent,
           CustomParagraph,
           CustomSection,
           CustomColumn,
-          CustomTwoColumns,
-          CustomThreeColumns,
-          CustomFourColumns,
+          CustomColumns,
           import_extensions.Container.extend({ content: "block*" }),
           import_extension_placeholder.Placeholder.configure({
             placeholder: ({ node }) => {
@@ -560,9 +472,7 @@ var EditorCanvas = (0, import_react3.forwardRef)(
             includeChildren: true,
             showOnlyCurrent: false
           }),
-          Spacer,
-          ExternalDropHandler,
-          ThemeInitializer
+          ExternalDropHandler
         ],
         children
       }
@@ -571,101 +481,261 @@ var EditorCanvas = (0, import_react3.forwardRef)(
 );
 
 // src/components/ColumnControls.tsx
-var import_react4 = require("@tiptap/react");
+var import_react3 = require("@tiptap/react");
+var import_ui = require("@react-email/editor/ui");
+
+// src/components/InspectorPrimitives.tsx
 var import_jsx_runtime4 = require("react/jsx-runtime");
-var COLUMN_TYPE_MAP = {
-  2: "twoColumns",
-  3: "threeColumns",
-  4: "fourColumns"
-};
+var InspectorSection = ({ title, children }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { "data-re-inspector-section": "", "data-has-title": "", children: [
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { "data-re-inspector-section-header": "", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { type: "button", "data-re-inspector-section-toggle": "", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { "data-re-inspector-text": "", children: title }) }) }),
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { "data-re-inspector-section-body": "", children })
+] });
+var InspectorRow = ({ label, children }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { "data-re-inspector-prop-row": "", children: [
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { "data-re-inspector-label": "", children: label }),
+  children
+] });
+var InspectorTextInput = ({ label, ...inputProps }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { "data-re-inspector-prop-row": "", children: [
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { "data-re-inspector-label": "", children: label }),
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { "data-re-inspector-number": "", style: { flex: 1 }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+    "input",
+    {
+      "data-re-inspector-input": true,
+      type: "text",
+      style: { width: "100%", maxWidth: "unset" },
+      ...inputProps
+    }
+  ) })
+] });
+var InspectorSelect = ({ label, children, ...selectProps }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { "data-re-inspector-prop-row": "", children: [
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { "data-re-inspector-label": "", children: label }),
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { "data-re-inspector-select": "", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+    "select",
+    {
+      "data-re-inspector-input": true,
+      style: { background: "transparent", border: "none", outline: "none", fontSize: "0.75rem", color: "inherit", cursor: "pointer", maxWidth: "9rem" },
+      ...selectProps,
+      children
+    }
+  ) })
+] });
+var InspectorToggleGroup = ({ label, children }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { "data-re-inspector-prop-row": "", children: [
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { "data-re-inspector-label": "", children: label }),
+  /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { "data-re-inspector-toggle-group": "", children })
+] });
+var InspectorToggleItem = ({ isActive, children, ...rest }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+  "button",
+  {
+    type: "button",
+    "data-re-inspector-toggle-item": "",
+    ...isActive ? { "data-active": "" } : {},
+    ...rest,
+    children
+  }
+);
+
+// src/components/ColumnControls.tsx
+var import_jsx_runtime5 = require("react/jsx-runtime");
 var ColumnControls = () => {
-  const { editor } = (0, import_react4.useCurrentEditor)();
+  const { editor } = (0, import_react3.useCurrentEditor)();
   if (!editor) return null;
   const { selection } = editor.state;
   const node = editor.state.doc.nodeAt(selection.from);
-  const isColumnNode = node && Object.values(COLUMN_TYPE_MAP).includes(node.type.name);
-  if (!isColumnNode) return null;
+  const isColumnsNode = node && node.type.name === "columns";
+  if (!isColumnsNode) return null;
+  const currentCount = node.attrs.columnCount || 2;
   const changeColumns = (count) => {
-    const typeName = COLUMN_TYPE_MAP[count];
-    if (!typeName) return;
     editor.chain().focus().command(({ tr, state, dispatch }) => {
       if (dispatch) {
         const currentPos = state.selection.from;
         const currentNode = state.doc.nodeAt(currentPos);
         if (currentNode) {
-          const newNode = state.schema.nodes[typeName].create(null, currentNode.content);
+          const existingCols = [];
+          currentNode.content.forEach((col) => existingCols.push(col));
+          const newCols = Array.from({ length: count }, (_, i) => {
+            if (i < existingCols.length) return existingCols[i];
+            return state.schema.nodes.columnsColumn.create(null, []);
+          });
+          const newNode = state.schema.nodes.columns.create(
+            { ...currentNode.attrs, columnCount: count },
+            newCols
+          );
           tr.replaceWith(currentPos, currentPos + currentNode.nodeSize, newNode);
         }
       }
       return true;
     }).run();
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "reb-column-controls", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "reb-column-controls-label", children: "Column Layout" }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "reb-column-controls-buttons", children: Object.keys(COLUMN_TYPE_MAP).map((key) => {
-      const count = Number(key);
-      const isActive = node.type.name === COLUMN_TYPE_MAP[count];
-      return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
-        "button",
-        {
-          onClick: () => changeColumns(count),
-          className: `reb-column-btn${isActive ? " active" : ""}`,
-          children: [
-            count,
-            " Cols"
-          ]
-        },
-        count
-      );
-    }) })
-  ] });
+  const COLUMN_OPTIONS = [
+    { count: 2, Icon: import_ui.Columns2Icon },
+    { count: 3, Icon: import_ui.Columns3Icon },
+    { count: 4, Icon: import_ui.Columns4Icon }
+  ];
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(InspectorSection, { title: "Column Layout", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(InspectorToggleGroup, { label: "Columns", children: COLUMN_OPTIONS.map(({ count, Icon }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    InspectorToggleItem,
+    {
+      isActive: currentCount === count,
+      onClick: () => changeColumns(count),
+      title: `${count} columns`,
+      children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Icon, { size: 14 })
+    },
+    count
+  )) }) });
 };
 
+// src/components/BodyExtras.tsx
+var import_ui2 = require("@react-email/editor/ui");
+var import_jsx_runtime6 = require("react/jsx-runtime");
+var ALIGNMENT_ITEMS = [
+  {
+    value: "left",
+    alternativeIcon: import_ui2.AlignLeftIcon,
+    icon: import_ui2.AlignStartVerticalIcon
+  },
+  {
+    value: "center",
+    alternativeIcon: import_ui2.AlignCenterIcon,
+    icon: import_ui2.AlignCenterVerticalIcon
+  },
+  {
+    value: "right",
+    alternativeIcon: import_ui2.AlignRightIcon,
+    icon: import_ui2.AlignEndVerticalIcon
+  }
+];
+var FONT_FAMILIES = [
+  { value: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', label: "System UI" },
+  { value: "Arial, Helvetica, sans-serif", label: "Arial" },
+  { value: '"Helvetica Neue", Helvetica, sans-serif', label: "Helvetica Neue" },
+  { value: 'Georgia, "Times New Roman", serif', label: "Georgia" },
+  { value: "Verdana, Geneva, sans-serif", label: "Verdana" },
+  { value: "Tahoma, Geneva, sans-serif", label: "Tahoma" },
+  { value: '"Trebuchet MS", Helvetica, sans-serif', label: "Trebuchet MS" },
+  { value: '"Times New Roman", Times, serif', label: "Times New Roman" },
+  { value: '"Courier New", Courier, monospace', label: "Courier New" }
+];
+var FONT_WEIGHTS = [
+  { value: "300", label: "Light (300)" },
+  { value: "400", label: "Regular (400)" },
+  { value: "500", label: "Medium (500)" },
+  { value: "600", label: "Semi Bold (600)" },
+  { value: "700", label: "Bold (700)" },
+  { value: "800", label: "Extra Bold (800)" }
+];
+function BodyExtras({ findStyleValue, setGlobalStyle }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(InspectorSection, { title: "Email settings", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(InspectorToggleGroup, { label: "Content align", children: ALIGNMENT_ITEMS.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      InspectorToggleItem,
+      {
+        isActive: findStyleValue("body", "align") === item.value,
+        onClick: (e) => setGlobalStyle("body", "align", item.value),
+        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(item.icon, { size: 16 })
+      },
+      item.value
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      InspectorSelect,
+      {
+        label: "Font family",
+        value: findStyleValue("body", "fontFamily"),
+        onChange: (e) => setGlobalStyle("body", "fontFamily", e.target.value),
+        children: FONT_FAMILIES.map((f) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: f.value, children: f.label }, f.value))
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      InspectorSelect,
+      {
+        label: "Font weight",
+        value: findStyleValue("body", "fontWeight") || "400",
+        onChange: (e) => setGlobalStyle("body", "fontWeight", e.target.value),
+        children: FONT_WEIGHTS.map((w) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: w.value, children: w.label }, w.value))
+      }
+    )
+  ] });
+}
+
 // src/components/EmailBuilder.tsx
-var import_ui = require("@react-email/editor/ui");
-var import_jsx_runtime5 = require("react/jsx-runtime");
+var import_ui3 = require("@react-email/editor/ui");
+var import_jsx_runtime7 = require("react/jsx-runtime");
 var EmailBuilder = () => {
-  const [editorRef, setEditorRef] = (0, import_react5.useState)(null);
-  const handleExportJSON = () => {
-    if (!editorRef) return;
-    const json = editorRef.getJSON();
-    console.log("JSON Export:", json);
-    alert("JSON exported to console!");
+  const [editorRef, setEditorRef] = (0, import_react4.useState)(null);
+  const [viewMode, setViewMode] = (0, import_react4.useState)("editor");
+  const [jsonContent, setJsonContent] = (0, import_react4.useState)("");
+  const [htmlContent, setHtmlContent] = (0, import_react4.useState)("");
+  const handleTabChange = async (mode) => {
+    setViewMode(mode);
+    if (mode === "json" && editorRef) {
+      const json = editorRef.getJSON();
+      setJsonContent(JSON.stringify(json, null, 2));
+    }
+    if (mode === "html" && editorRef) {
+      const html = await editorRef.getEmailHTML();
+      setHtmlContent(html);
+    }
   };
-  const handleExportHTML = async () => {
-    if (!editorRef) return;
-    const html = await editorRef.getEmailHTML();
-    console.log("HTML Export:", html);
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "email-template.html";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "reb-builder-container", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Sidebar, { editor: editorRef?.editor }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("main", { className: "reb-main", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("header", { className: "reb-header", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "reb-header-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { className: "reb-btn reb-btn-secondary", onClick: handleExportJSON, children: "Export JSON" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { className: "reb-btn reb-btn-primary", onClick: handleExportHTML, children: "Export HTML" })
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "reb-content", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EditorCanvas, { onReady: setEditorRef, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "reb-inspector-sidebar", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_ui.Inspector.Root, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_ui.Inspector.Breadcrumb, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_ui.Inspector.Document, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_ui.Inspector.Node, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_ui.Inspector.Text, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(ColumnControls, {})
-      ] }) }) }) })
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "reb-builder-container", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Sidebar, { editor: editorRef?.editor }),
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("main", { className: "reb-main", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("header", { className: "reb-header", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "reb-view-tabs", children: ["editor", "json", "html"].map((mode) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        "button",
+        {
+          id: `reb-tab-${mode}`,
+          className: `reb-view-tab${viewMode === mode ? " active" : ""}`,
+          onClick: () => handleTabChange(mode),
+          children: mode === "editor" ? "Editor" : mode.toUpperCase()
+        },
+        mode
+      )) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "reb-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: { display: viewMode === "editor" ? "contents" : "none" }, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(EditorCanvas, { onReady: setEditorRef, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "reb-inspector-sidebar", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_ui3.Inspector.Root, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Breadcrumb, { children: (segments) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("nav", { "data-re-inspector-breadcrumb": true, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("ol", { "data-re-inspector-breadcrumb-list": true, children: segments.map((segment, index) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("li", { "data-re-inspector-breadcrumb-item": true, children: [
+            index !== 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { "data-re-inspector-breadcrumb-separator": "", children: "/" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { type: "button", "data-re-inspector-breadcrumb-button": true, onClick: () => segment.focus(), children: segment.node.nodeType }, index)
+          ] }, index)) }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Document, { children: (context) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(BodyExtras, { ...context }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Document, {})
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Node, { children: (context) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+            context.nodeType === "columns" && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(ColumnControls, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Background, { ...context }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Typography, { ...context }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Padding, { ...context }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Border, { ...context })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_ui3.Inspector.Text, {})
+        ] }) }) }) }),
+        viewMode !== "editor" && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "reb-code-panel", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "reb-code-panel-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "reb-code-panel-label", children: viewMode === "json" ? "JSON Structure" : "HTML Output" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+              "button",
+              {
+                className: "reb-code-copy-btn",
+                onClick: () => {
+                  navigator.clipboard.writeText(viewMode === "json" ? jsonContent : htmlContent);
+                },
+                children: "Copy"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("pre", { className: "reb-code-content", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("code", { children: viewMode === "json" ? jsonContent : htmlContent }) })
+        ] })
+      ] })
     ] })
   ] });
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  BodyExtras,
+  ColumnControls,
   EditorCanvas,
   EmailBuilder,
-  Sidebar,
-  Spacer
+  InspectorRow,
+  InspectorSection,
+  InspectorSelect,
+  InspectorTextInput,
+  InspectorToggleGroup,
+  InspectorToggleItem,
+  Sidebar
 });
 //# sourceMappingURL=index.cjs.map

@@ -14,16 +14,15 @@ import {
 /** Sidebar tool definitions. Each entry maps a block type to its UI label and icon. */
 const TOOLS: { type: ElementType; label: string; icon: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
   { type: 'container', label: 'Container', icon: IconContainer },
-  { type: 'section',   label: 'Section',   icon: IconSection   },
-  { type: 'column',    label: 'Column',    icon: IconColumn    },
-  { type: 'heading',   label: 'Heading',   icon: IconHeading   },
-  { type: 'text',      label: 'Text',      icon: IconText      },
-  { type: 'image',     label: 'Image',     icon: IconImage     },
-  { type: 'button',    label: 'Button',    icon: IconButton    },
-  { type: 'link',      label: 'Link',      icon: IconLink      },
-  { type: 'markdown',  label: 'Markdown',  icon: IconMarkdown  },
-  { type: 'divider',   label: 'Divider',   icon: IconDivider   },
-  { type: 'spacer',    label: 'Spacer',    icon: IconSpacer    },
+  { type: 'section', label: 'Section', icon: IconSection },
+  { type: 'columns', label: 'Columns', icon: IconColumn },
+  { type: 'heading', label: 'Heading', icon: IconHeading },
+  { type: 'text', label: 'Text', icon: IconText },
+  { type: 'image', label: 'Image', icon: IconImage },
+  { type: 'button', label: 'Button', icon: IconButton },
+  { type: 'link', label: 'Link', icon: IconLink },
+  { type: 'markdown', label: 'Markdown', icon: IconMarkdown },
+  { type: 'divider', label: 'Divider', icon: IconDivider },
 ];
 
 // --------------------------------------------------------------------------
@@ -55,8 +54,7 @@ interface ToolItemProps {
 
 const ToolItem: React.FC<ToolItemProps> = ({ type, label, icon: Icon }) => {
   const handleDragStart = (e: React.DragEvent) => {
-    // Map 'column' to the internal Tiptap node name 'twoColumns'
-    const blockType = type === 'column' ? 'twoColumns' : (type as string);
+    const blockType = type as string;
     e.dataTransfer.setData('application/react-email-block', JSON.stringify({ type: blockType }));
     e.dataTransfer.effectAllowed = 'move';
   };
@@ -88,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ editor }) => {
           node.type.name === 'button' ||
           node.type.name === 'image';
 
-        if (isRelevantBlock && node.type.name !== 'doc') {
+        if (isRelevantBlock && node.type.name !== 'doc' && node.type.name !== "globalContent") {
           nodes.push({
             type: node.type.name,
             pos,

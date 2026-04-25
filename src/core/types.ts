@@ -5,7 +5,7 @@ export type ElementType =
   | 'button'
   | 'spacer'
   | 'container'
-  | 'column'
+  | 'columns'
   | 'heading'
   | 'link'
   | 'markdown'
