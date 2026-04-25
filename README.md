@@ -4,21 +4,21 @@ A React component library for building responsive email templates with a drag-an
 
 ## Features
 
-- **Drag-and-drop editor** — drag blocks from the sidebar directly onto the canvas
-- **Structure panel** — hierarchical document tree with click-to-select and block deletion
+- **Drag-and-drop editor** - drag blocks from the sidebar directly onto the canvas
+- **Structure panel** - hierarchical document tree with click-to-select and block deletion
 
 ## Requirements
 
 | Peer dependency | Version |
 |---|---|
-| `react` | ≥ 18.0.0 |
-| `react-dom` | ≥ 18.0.0 |
-| `@tiptap/core` | ≥ 3.0.0 |
-| `@tiptap/react` | ≥ 3.0.0 |
-| `@tiptap/starter-kit` | ≥ 3.0.0 |
-| `@react-email/components` | ≥ 1.0.0 |
-| `@react-email/editor` | ≥ 1.0.0 |
-| `@react-email/render` | ≥ 2.0.0 |
+| `react` | >= 18.0.0 |
+| `react-dom` | >= 18.0.0 |
+| `@tiptap/core` | >= 3.0.0 |
+| `@tiptap/react` | >= 3.0.0 |
+| `@tiptap/starter-kit` | >= 3.0.0 |
+| `@react-email/components` | >= 1.0.0 |
+| `@react-email/editor` | >= 1.0.0 |
+| `@react-email/render` | >= 2.0.0 |
 
 ## Installation
 
@@ -52,7 +52,7 @@ That's it. The component renders a full-featured email editor with sidebar, canv
 
 ### `<EmailBuilder />`
 
-The top-level, batteries-included component. Renders the complete editor UI: sidebar, canvas, inspector panel, and header with export buttons.
+The top-level, batteries-included component. Renders the complete editor UI: sidebar, canvas, inspector panel, and header with preview buttons.
 
 ```tsx
 import { EmailBuilder } from 'react-email-builder';
@@ -94,7 +94,7 @@ function MyEditor() {
 |---|---|---|
 | `onReady` | `(ref: EmailEditorRef) => void` | Called when the editor is mounted. Provides the `EmailEditorRef` for programmatic control (e.g. `getJSON()`, `getEmailHTML()`). |
 | `children` | `React.ReactNode` | Optional content rendered inside the editor wrapper (e.g. inspector panels). |
-| `ref` | `React.Ref<EmailEditorRef>` | Forward ref support — exposes the same `EmailEditorRef`. |
+| `ref` | `React.Ref<EmailEditorRef>` | Forward ref support - exposes the same `EmailEditorRef`. |
 
 ---
 
@@ -108,10 +108,6 @@ import { type EmailEditorRef } from '@react-email/editor';
 
 <Sidebar editor={editorRef?.editor} />
 ```
-
-The sidebar has two tabs:
-- **Components** — draggable block items (Container, Section, Column, Heading, Text, Image, Button, Link, Markdown, Divider)
-- **Structure** — live document tree with click-to-select and delete-block actions
 
 ---
 

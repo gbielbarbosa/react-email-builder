@@ -109,7 +109,7 @@ const CustomSection = extendAsBlock(Section.extend({ content: 'block*' }), 'node
 const CustomColumn = extendAsBlock(ColumnsColumn.extend({ content: 'block*' }), 'node-column');
 
 /**
- * Unified columns extension — replaces TwoColumns/ThreeColumns/FourColumns.
+ * Unified columns extension - replaces TwoColumns/ThreeColumns/FourColumns.
  * Uses `columnCount` attribute (2–4) to control how many columnsColumn children
  * are expected. Content is `columnsColumn+` to allow any number of children.
  */

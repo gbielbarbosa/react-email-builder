@@ -41,7 +41,7 @@ declare const ColumnControls: React.FC;
  *
  * Thin wrapper components over the `data-re-inspector-*` attribute API used
  * by @react-email/editor's inspector CSS. The library does NOT export React
- * components for these primitives — it only applies styles via CSS attribute
+ * components for these primitives - it only applies styles via CSS attribute
  * selectors. These wrappers give us a typed, reusable API so we don't have to
  * copy raw data-attributes in every custom panel.
  */
