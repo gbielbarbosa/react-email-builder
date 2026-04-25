@@ -2,6 +2,8 @@
 
 A React component library for building responsive email templates with a drag-and-drop editor, powered by [React Email](https://react.email) and [Tiptap](https://tiptap.dev).
 
+**Demo page** - https://gbielbarbosa.github.io/react-email-builder/
+
 ## Features
 
 - **Drag-and-drop editor** - drag blocks from the sidebar directly onto the canvas
